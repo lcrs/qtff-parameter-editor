@@ -1,14 +1,8 @@
-![BBC RD Logo](./bbcrd-logo.png)
-
 # QuickTime File Format and ProRes Video Parameter Editing
-
-Part of the [HDR-TV](http://www.bbc.co.uk/rd/projects/high-dynamic-range) series. Last updated April 2017.
-
-# Introduction
 
 Several post-production tools and utilities are now aware of the colour and transfer function parameters specified in [ITU-R BT.2100-0](https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2100-0-201607-I!!PDF-E.pdf). However, some tools are unable to correctly signal the correct parameters, and may result in a file with the incorrect video parameters. Subsequent tools or displays may then look at these video parameters and render the image incorrectly, for instance, video that this signalled as [ITU-R BT.709](https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.709-6-201506-I!!PDF-E.pdf) colour primaries and in fact is [ITU-R BT.2020](https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2020-2-201510-I!!PDF-E.pdf) colour primary and then displayed on a monitor will look desaturated when the display is interpreting the signalling contained within the file. Incorrect signalling may also result in unnecessary and incorrect transcoding between colour spaces and transfer functions.
 
-This document introduces a series of tools to allow editing of the colour primaries, colour matrix and transfer function characteristics in a [QuickTime File Format](https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFPreface/qtffPreface.html) (MOV) using a [ProRes](https://support.apple.com/en-gb/HT202410) video codec.
+This document introduces a series of tools to allow editing of the colour primaries, colour matrix and transfer function characteristics in a [QuickTime File Format](https://developer.apple.com/library/content/documentation/QuickTime/QTFF/QTFFPreface/qtffPreface.html) (MOV).
 
 # QuickTime File Format (qtff)
 
@@ -32,6 +26,8 @@ The basic data unit is known as an Atom. The Atom that defines the relevant info
 In addition to the colour information carried within the Color Atom, information regarding the transfer function, colour matrix and primaries are also stored within the frame header information of the ProRes elementary stream, alongside other parameters, such as frame rate, spatial resolution and chroma format. This header is repeated throughout the bitstream. Full details of the header layout can be found in the [SMPTE specification](http://ieeexplore.ieee.org/document/7438722/).
 
 To avoid any ambiguity in any workflows, it is imperative that the the information in the header for the ProRes stream match that of the qtff colr Atom.
+
+Note that this particular version has ProRes support commented out, so it can be used on h264 files!  Use the original BBC fork for ProRes.
 
 # Video Characteristics
 
@@ -95,13 +91,11 @@ The colour matrix can be selected from the list:
 
 # Tools
 
-This repository contains a number of tools that will aid in analysing a video file to obtain the video characteristics, and subsequently allow modification of the qttv container and ProRes bitstream to alter the characteristics
+This repository contains a number of tools that will aid in analysing a video file to obtain the video characteristics, and subsequently allow modification of the qttv container to alter the characteristics
 
 ## Getting Started
 
 ### Prerequisites
-
-[ffprobe](https://ffmpeg.org/ffprobe.html) is required to find and extract the location of the frame headers from the ProRes bitstream. Downloads can be found [here](https://ffmpeg.org/download.html) for your OS. Static builds for [Linux](https://ffmpeg.org/download.html#build-linux) are available if building from source is not an option. Static builds for Windows and OSX are available via third party websites. Once obtained, ffprobe must be put into the `PATH`.
 
 [MediaInfo](https://mediaarea.net/en/MediaInfo) is a convenient unified display of the most relevant technical and tag data for video and audio files. It is useful to check the accuracy of the tools provided within this repository.
 
@@ -143,32 +137,6 @@ moov: s=     24938 (0x0000616a), o=          5884661168 (0x000000015ec0cdb0)
       flags: 0x000000
       ...
       ...
-```
-
-To run `rdd36dump` and `rdd36mod`, the location of the headers must first be located with `ffprobe`.
-
-`ffprobe -loglevel panic -show_packets -select_streams v:0 ipFile.mov | grep pos > header_offsets.txt`
-
-The header_offsets.txt can then be provided to `rdddump`
-
-`rdd36dump --offsets header_offsets.txt ipFile.mov > rdd36dump.txt`
-
-Where the output rdd36dump.txt will look something like this:
-
-```
-frame: num=0, pos=96256
-     frame_size: 221808
-     frame_identifier: 0x69637066 (icpf)
-     frame_header:
-         frame_header_size: 148
-         reserved: 0x00
-         bitstream_version: 0
-         encoder_identifier: 0x61626d30 (abm0)
-         horizontal_size: 3840
-         vertical_size: 2160
-         chroma_format: 2 (4:2:2)
-         ...
-         ...
 ```
 
 ### Modifying the video characteristics
@@ -219,13 +187,9 @@ The help from the bash script describes its usage:
 
 If a colr Atom is not present in the video file, the process will not attempt to insert one, and will quit the processing.
 
-# Resources
-
-Please visit our [project page](http://www.bbc.co.uk/rd/projects/high-dynamic-range) for more information about High Dynamic Range (HDR) and Hybrid Log-Gamma (HLG).
-
 # Authors
 
-This software was written by Philip de Nier (philip.denier at bbc.co.uk) and Manish Pindoria.
+This software was written by Philip de Nier (philip.denier at bbc.co.uk) and Manish Pindoria, then modified by Lewis Saunders
 
 # Contact and Legal Information
 
