@@ -304,7 +304,7 @@ cloneMovAndModify()
   leaf=${ipFile%.mov}
   
   outputInfoMovWrapper $ipFile
-  outputInfoProRes $ipFile
+  #outputInfoProRes $ipFile
   
   if [ "$ipFile" = "$opFile" ]
   then
@@ -344,7 +344,7 @@ cloneMovAndModify()
     echo "Modifying the primary ..."
     primhex=$(printf "%02x" $newPrim)    
     printf "\x${primhex}" | dd conv=notrunc of=$opFile bs=1 seek=$(($offset + 13)) &> /dev/null 
-    ${dir}/src/rdd36mod -o ${leaf}_offsets.txt -p $newPrim  ${opFile}    
+    #${dir}/src/rdd36mod -o ${leaf}_offsets.txt -p $newPrim  ${opFile}    
   fi  
   
   if [ "$newTF" != "-1" ]
@@ -352,7 +352,7 @@ cloneMovAndModify()
     echo "Modifying the transfer function ..." 
     tfhex=$(printf "%02x" $newTF)   
     printf "\x${tfhex}" | dd conv=notrunc of=$opFile bs=1 seek=$(($offset + 15)) &> /dev/null 
-    ${dir}/src/rdd36mod -o ${leaf}_offsets.txt -t $newTF  ${opFile}   
+    #${dir}/src/rdd36mod -o ${leaf}_offsets.txt -t $newTF  ${opFile}   
   fi 
   
   if [ "$newMatrix" != "-1" ]
@@ -360,11 +360,11 @@ cloneMovAndModify()
     echo "Modifying the matrix ..." 
     matrixhex=$(printf "%02x" $newMatrix) 
     printf "\x${matrixhex}" | dd conv=notrunc of=$opFile bs=1 seek=$(($offset + 17)) &> /dev/null
-   ${dir}/src/rdd36mod -o ${leaf}_offsets.txt -m $newMatrix  ${opFile}       
+    #${dir}/src/rdd36mod -o ${leaf}_offsets.txt -m $newMatrix  ${opFile}       
   fi 
   
   outputInfoMovWrapper $opFile
-  outputInfoProRes $opFile
+  #outputInfoProRes $opFile
 }
 
 
@@ -408,7 +408,7 @@ then
   else
     checkffprobe
     outputInfoMovWrapper $1
-    outputInfoProRes $1
+    #outputInfoProRes $1
     cleanup $1
   fi
 else
